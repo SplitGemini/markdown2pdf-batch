@@ -43,10 +43,10 @@ async function convert(docsPath, filePath, targetDirPath) {
         targetDirPath,
         filePath.replace(new RegExp(`^${docsPath}/`), "")
     );
-    console.log(`convert ${filePath} to ${pdf}`);
+    console.log(`convert ${filePath} to ${pdf.replace(/\.md$/, ".pdf")}`);
     // chrome (puppeteer) export
     await engine.chromeExport({ fileType: "pdf", runAllCodeChunks: true });
-
+    console.log("finish");
     copyPdf(filePath.replace(/\.md$/, ".pdf"), dirname(pdf));
 }
 
@@ -104,22 +104,16 @@ async function main() {
     copyFolderRecursiveSync(docsPath, docsTmpDir);
     docsTmpDir = path.resolve(docsTmpDir, path.basename(docsPath));
     const FileHound = require("filehound");
-    const files = FileHound.create().paths(docsTmpDir).ext("md").find();
+    const files = await FileHound.create().paths(docsTmpDir).ext("md").find();
 
-    files
-        .map((filePath) =>
-            convert(
-                docsTmpDir,
-                filePath,
-                program.opts().output || docsPath + "-pdf"
-            )
-        )
-        .catch((err) => {
-            console.log(err);
-        })
-        .finally(() => {
-            process.exit(0);
-        });
+    for (const filePath of files) {
+        await convert(
+            docsTmpDir,
+            filePath,
+            program.opts().output || docsPath + "-pdf"
+        );
+    }
+    process.exit(0);
 }
 
 main();

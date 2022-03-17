@@ -8,7 +8,7 @@ RUN  apt update && apt install --no-install-recommends -y \
     libnspr4 libnss3 libpango-1.0-0 libpangocairo-1.0-0 libstdc++6 libx11-6 \
     libx11-xcb1 libxcb1 libxcomposite1 libxcursor1 libxdamage1 libxext6 libxfixes3 \
     libxi6 libxrandr2 libxrender1 libxshmfence1 libxss1 libxtst6 lsb-release wget \
-    xdg-utils
+    xdg-utils fonts-noto fonts-noto-cjk
 
 COPY . /app
 RUN cd /app && npm ci

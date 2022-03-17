@@ -20,9 +20,9 @@ node index.js --docs docs
 
 ## Container
 
-use `docker run -w $(pwd) -v $(pwd):$(pwd) guoh27/jelina:md2pdf <Arguments>` run container
+use `docker run -w $(pwd) -v $(pwd):$(pwd) -u $(id -u):$(id -g) --rm guoh27/jelina:md2pdf <Arguments>` run container
 
-example: `docker run -w $(pwd) -v $(pwd):$(pwd) guoh27/jelina:md2pdf --docs tests`
+example: `docker run -w $(pwd) -v $(pwd):$(pwd) -u $(id -u):$(id -g) --rm guoh27/jelina:md2pdf --docs tests`
 
 ## Reference
 
