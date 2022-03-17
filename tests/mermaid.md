@@ -60,9 +60,9 @@ graph BT
 
   DEV  -.- RDEV
   proc -.- rproc
-  ```
+```
 
-  ```mermaid
+```mermaid
   graph TD
   subgraph sub
     node(Line 1<br>Line 2<br/>Line 3)

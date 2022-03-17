@@ -1,23 +1,33 @@
-# 生成PDF文档
+# Convert markdown to pdf in batch
 
-运行`./mkdocs_pdf.sh`生成为docs文件夹的所有md生成pdf文件，放在pdf文件夹内
+This is a bash script for convert all markdown(.md) docs in a directory to pdf, and reserve dir structure. It use [pandoc](https://github.com/jgm/pandoc), [mermaid-cli](https://github.com/mermaid-js/mermaid-cli) and [wkhtmltopdf](https://github.com/wkhtmltopdf/wkhtmltopdf) to complete the conversion process.
 
-参数：
+## Usage
 
-* `[-h|--help]`: 打印帮助
-* `[-d|--docs]`: 指定md文件夹，默认为docs
-* `[-t|--tmp-dir]`: 指定缓存文件夹，默认在改目录生成一个build-docs-前缀的目录
+for script mkdocs_pdf.sh
+
+Arguments:
+
+* `[-d|--docs]`: md dir
+* `[-o|--output]`: pdf output dir, md dir suffix with '-pdf' by default
+
+## Example
 
 ```shell
-# 为docs文件夹生成pdf
-./mkdocs_pdf.sh
-
-# 为ppp文件夹生成pdf
-./mkdocs_pdf.sh -d ppp
-
-# 指定缓存目录，多次运行节省下载过程
-./mkdocs_pdf.sh -t build-docs-xxxxxx
-#
+# output to docs-pdf
+node index.js --docs docs
 ```
 
-*该脚本会联网下载工具，请确保代理已连接，缺乏必须组件时可能需要*
+## Container
+
+use `docker run -w $(pwd) -v $(pwd):$(pwd) guoh27/jelina:md2pdf <Arguments>` run container
+
+example: `docker run -w $(pwd) -v $(pwd):$(pwd) guoh27/jelina:md2pdf --docs tests`
+
+## Reference
+
+[shd101wyy/mume](https://github.com/shd101wyy/mume)
+
+## Old
+
+Old dir stores bash script that use pandoc and wkhtmltopdf to convert pdf, using these tools instead of memu is too silly for me.

@@ -6,10 +6,6 @@
     "author": "https://github.com/SplitGemini",
     "license": "MIT",
     "dependencies": {
-        "@shd101wyy/mume": "^0.7.0",
-        "commander": "^9.0.0",
-        "filehound": "^1.17.5",
-        "mktemp": "^1.0.0",
-        "puppeteer": "^13.5.1"
+        "@mermaid-js/mermaid-cli": "^8.14.0"
     }
 }

@@ -14,6 +14,13 @@ declare -r MAX_RETRY_NUM=3
 declare -r NODE_LINK='https://nodejs.org/download/release/v16.14.0/node-v16.14.0-linux-x64.tar.xz'
 declare -r FONT_LINK_BASE='https://github.com/adobe-fonts/source-han-sans/raw/release/Variable/WOFF2/OTF/'
 declare -Ar FONT_NAMES=(
+    ['sc']="Source Han Sans SC"
+    ['tc']="Source Han Sans TC"
+    ['hc']="Source Han Sans HC"
+    ['jp']="Source Han Sans JP"
+    ['kr']="Source Han Sans KR"
+)
+declare -Ar FONT_FILE_NAMES=(
     ['sc']="SourceHanSansSC-VF.otf.woff2"
     ['tc']="SourceHanSansTC-VF.otf.woff2"
     ['hc']="SourceHanSansHC-VF.otf.woff2"
@@ -21,11 +28,11 @@ declare -Ar FONT_NAMES=(
     ['kr']="SourceHanSansK-VF.otf.woff2"
 )
 declare -Ar FONT_LINKS=(
-    ['sc']="${FONT_LINK_BASE}${FONT_NAMES['sc']}"
-    ['tc']="${FONT_LINK_BASE}${FONT_NAMES['ts']}"
-    ['hc']="${FONT_LINK_BASE}${FONT_NAMES['hc']}"
-    ['jp']="${FONT_LINK_BASE}${FONT_NAMES['jp']}"
-    ['kr']="${FONT_LINK_BASE}${FONT_NAMES['kr']}"
+    ['sc']="${FONT_LINK_BASE}${FONT_FILE_NAMES['sc']}"
+    ['tc']="${FONT_LINK_BASE}${FONT_FILE_NAMES['ts']}"
+    ['hc']="${FONT_LINK_BASE}${FONT_FILE_NAMES['hc']}"
+    ['jp']="${FONT_LINK_BASE}${FONT_FILE_NAMES['jp']}"
+    ['kr']="${FONT_LINK_BASE}${FONT_FILE_NAMES['kr']}"
 )
 
 #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< log functions
@@ -229,24 +236,21 @@ get_node() {
 }
 
 get_css() {
-    rsync -au $OWN_DIR/css/ $TEMP_DIR/css/
+    rsync -a $OWN_DIR/css/ $TEMP_DIR/css/
     rsync -au $OWN_DIR/fonts/ $TEMP_DIR/fonts/
+    sed -i -e "s|@@CSS_FILE@@|$LANGUAGE|" -e "s|@@FONT@@|${FONT_NAMES[$LANGUAGE]}|" $CSS_PATH
 }
 
 get_font() {
-    if [ -z "${FONT_LINKS[$LANGUAGE]}" ]; then
-        log_error "language not valid: $LANGUAGE"
-        return 1
-    fi
-    download ${FONT_LINKS[$LANGUAGE]} $TEMP_DIR/fonts/${FONT_NAMES[$LANGUAGE]}
+    download ${FONT_LINKS[$LANGUAGE]} $TEMP_DIR/fonts/${FONT_FILE_NAMES[$LANGUAGE]}
 }
 
 # must run after get_css
 #
 install_font() {
     mkdir -p ~/.fonts/opentype/
-    [ -e $TEMP_DIR/fonts/${FONT_NAMES[$LANGUAGE]} ] || get_font $lan
-    cp $TEMP_DIR/fonts/${FONT_NAMES[$LANGUAGE]} ~/.fonts/opentype/
+    [ -e $TEMP_DIR/fonts/${FONT_FILE_NAMES[$LANGUAGE]} ] || get_font
+    cp $TEMP_DIR/fonts/${FONT_FILE_NAMES[$LANGUAGE]} ~/.fonts/opentype/
     fc-cache -f
 }
 
@@ -271,10 +275,8 @@ prepare() {
     command -v node &>/dev/null || {
         get_node || return 1
     }
-
-    [ -f $CSS_PATH ] || {
-        get_css || return 1
-    }
+    # always update css
+    get_css || return 1
 
     if [ -n "$LANGUAGE" ]; then
         get_font || return 1
@@ -319,18 +321,41 @@ un_mermaid() {
 do_pandoc() {
     local input=$1
     local output=$2
+    local inputs
     pushd "$(dirname $input)" &>/dev/null || return 1
-    #local header=$2
-    #pandoc $header -o header.html --css github.css --pdf-engine wkhtmltopdf -t html5 -V papersize=A4 -s
+    #set -x
+    if grep -Eq '^\[TOC\]' $input; then
+        local html_header html toc_line_num
+        # variables
+        input_header="${input%.md}-header.md"
+        input_body="${input%.md}-body.md"
+        html_header="${input%.md}-header.html"
+        html="${input%.md}.html"
 
-    # margin
-    # https://stackoverflow.com/questions/46040862/pandoc-and-html5-exporting-pdfs-with-huge-margins
-    #
-    pandoc $input -o $output --css $CSS_PATH --pdf-engine wkhtmltopdf \
-        -t html5 -V papersize=A4 -s -V margin-top=20 -V margin-left=15 -V \
-        margin-right=15 -V margin-bottom=10 --pdf-engine-opt=--disable-smart-shrinking
+        toc_line_num=$(sed -n -Ee "/^\[TOC\]$/=" $input)
+        if [ $toc_line_num -ne 1 ]; then
+            sed -n "1,$((toc_line_num - 1))p" $input >$input_header
+            pandoc $input_header -o $html_header --css $CSS_PATH -t html5 --metadata-file \
+                $OWN_DIR/pandoc-metadata.yml -s --from markdown+emoji
+            inputs="$html_header"
+        fi
+        sed -n "$((toc_line_num + 1)),\$p" $input >$input_body
+
+        pandoc $input_body -o $html --css $CSS_PATH -t html5 --metadata-file \
+            $OWN_DIR/pandoc-metadata.yml -s --from markdown+emoji --toc
+        inputs="$inputs $html"
+    else
+        local html
+        html="${input%.md}.html"
+        pandoc $input -o $html --css $CSS_PATH -t html5 --metadata-file \
+            $OWN_DIR/pandoc-metadata.yml --from markdown+emoji -s
+        inputs="$html"
+    fi
+
+    wkhtmltopdf --page-size A4 --margin-top 20 --margin-left 15 \
+        --margin-right 15 --margin-bottom 10 --disable-smart-shrinking $inputs $output
     # --toc # -B header.html
-
+    #set +x
     popd &>/dev/null || return 1
 }
 
@@ -361,7 +386,7 @@ make_pdf() {
 
 usage() {
     echo \
-        "JelinaOS make pdf for docs script
+        "make pdf for docs script
 Usage: $0 [OPTIONS]
 
 OPTIONS:
@@ -369,7 +394,7 @@ OPTIONS:
   * [-t|--tmp-dir]: Specified temp dir, auto create one by default.
   * [-o|--output]: Specified output dir for pdf, docs dir suffix with '-pdf' by default.
   * [-d|--docs]: Specified docs dir, 'docs' by default.
-  * [-l|--language]: Specified language of font, select from 'en'(English), 'sc'(Simplified Chinese), 
+  * [-l|--language]: Specified language of font, select from 'sc'(Simplified Chinese),
         'tc'(Tranditional Chinese Taiwan), 'hc'(Tranditional Chinese - HongKong), 'jp'(Japanese),
         and 'kr'(Korean). Simplified Chinese by default.
   * [--prepare]: Prepare components but don't make pdf
@@ -385,7 +410,7 @@ while [[ $# -gt 0 ]]; do
             usage
             exit 0
             ;;
-        -t | --tmp)
+        -t | --tmp-dir)
             TEMP_DIR=$(readlink -f $2)
             if grep -q '\.' <<<$TEMP_DIR; then
                 log_error "Because of Mermaid-cli's bug, path can't has '.' symbol." \
@@ -404,6 +429,10 @@ while [[ $# -gt 0 ]]; do
             ;;
         -l | --language)
             LANGUAGE=$2
+            if ! grep -Eq "(?:^|\b)$LANGUAGE(?:$|\b)" <<<"${!FONT_NAMES[*]}"; then
+                log_error "invalid language $LANGUAGE, please select from '$(echo ${!FONT_NAMES[*]} | tr ' ' ',')'"
+                exit 1
+            fi
             shift
             ;;
         -p | --prepare)
@@ -421,6 +450,7 @@ done
 main() {
     # mermaid cli has bug to resolve path has '.' symbol, so temp dir can has '.'
     TEMP_DIR=${TEMP_DIR:-$(mktemp -d -p . build-docs-XXXXXXXX)}
+    LANGUAGE=${LANGUAGE:-sc}
 
     BIN_DIR="$TEMP_DIR/bin"
     mkdir -p $BIN_DIR
@@ -435,7 +465,7 @@ main() {
     prepare || exit 1
 
     # if only prepare , skip make docs
-    [ $PREPARE_ONLY = y ] && return 0
+    [ "$PREPARE_ONLY" = y ] && return 0
 
     DOCS=${DOCS:-./docs}
     if [ ! -d $DOCS ]; then
