@@ -1,0 +1,35 @@
+/*
+    Simplefied Chinese css font face define
+*/
+
+@font-face {
+	font-family: 'Source Han Sans SC';
+	font-style: normal;
+	font-weight: normal;
+	src: local('Source Han Sans SC'), local('SourceHanSansSC-Regular'),
+		url('../fonts/SourceHanSansSC-VF.otf.woff2') format('opentype');
+}
+
+@font-face {
+	font-family: 'Source Han Sans SC';
+	font-style: italic;
+	font-weight: normal;
+	src: local('Source Han Sans SC'), local('SourceHanSansSC-Italic'),
+		url('../fonts/SourceHanSansSC-VF.otf.woff2') format('opentype');
+}
+
+@font-face {
+	font-family: 'Source Han Sans SC';
+	font-style: normal;
+	font-weight: bold;
+	src: local('Source Han Sans SC'), local('SourceHanSansSC-Bold'),
+		url('../fonts/SourceHanSansSC-VF.otf.woff2') format('opentype');
+}
+
+@font-face {
+	font-family: 'Source Han Sans SC';
+	font-style: italic;
+	font-weight: bold;
+	src: local('Source Han Sans SC'), local('SourceHanSansSC-BoldItalic'),
+		url('../fonts/SourceHanSansSC-VF.otf.woff2') format('opentype');
+}

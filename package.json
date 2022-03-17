@@ -1,0 +1,12 @@
+{
+    "name": "mermaid-cli",
+    "version": "1.0.0",
+    "description": "mermaid-cli local",
+    "main": "index.js",
+    "author": "https://github.com/SplitGemini",
+    "license": "MIT",
+    "dependencies": {
+      "@mermaid-js/mermaid-cli": "^8.14.0"
+    }
+  }
+  
