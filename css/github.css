@@ -22,16 +22,17 @@ SOFTWARE.
 */
 
 /* 
-copy from
+modified from
 https://gist.github.com/tuzz/3331384 
 */
 
+@import url('./en.css');
 @import url('./@@CSS_FILE@@.css');
 
 body {
-	font-family: '@@FONT@@', 'Open Sans', "Clear Sans", "Helvetica Neue", 
+	font-family: 'Open Sans','@@FONT@@', "Clear Sans", "Helvetica Neue", 
 		Helvetica, Arial, 'Segoe UI Emoji', arial, sans-serif;
-	font-size: 14px;
+	font-size: 12px;
 	line-height: 1.6;
 	padding-top: 10px;
 	padding-bottom: 10px;

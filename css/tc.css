@@ -1,35 +1,35 @@
 /*
-    Tranditional Chinese - Taiwan css font face define
+    Traditional Chinese - Taiwan css font face define
 */
 
 @font-face {
-	font-family: 'Source Han Sans SC';
+	font-family: 'Source Han Sans TC';
 	font-style: normal;
 	font-weight: normal;
-	src: local('Source Han Sans SC'), local('SourceHanSansSC-Regular'),
+	src: local('Source Han Sans TC'), local('SourceHanSansTC-Regular'),
 		url('../fonts/SourceHanSansTC-VF.otf.woff2') format('opentype');
 }
 
 @font-face {
-	font-family: 'Source Han Sans SC';
+	font-family: 'Source Han Sans TC';
 	font-style: italic;
 	font-weight: normal;
-	src: local('Source Han Sans SC'), local('SourceHanSansSC-Italic'),
+	src: local('Source Han Sans TC'), local('SourceHanSansTC-Italic'),
 		url('../fonts/SourceHanSansTC-VF.otf.woff2') format('opentype');
 }
 
 @font-face {
-	font-family: 'Source Han Sans SC';
+	font-family: 'Source Han Sans TC';
 	font-style: normal;
 	font-weight: bold;
-	src: local('Source Han Sans SC'), local('SourceHanSansSC-Bold'),
+	src: local('Source Han Sans TC'), local('SourceHanSansTC-Bold'),
 		url('../fonts/SourceHanSansTC-VF.otf.woff2') format('opentype');
 }
 
 @font-face {
-	font-family: 'Source Han Sans SC';
+	font-family: 'Source Han Sans TC';
 	font-style: italic;
 	font-weight: bold;
-	src: local('Source Han Sans SC'), local('SourceHanSansSC-BoldItalic'),
+	src: local('Source Han Sans TC'), local('SourceHanSansTC-BoldItalic'),
 		url('../fonts/SourceHanSansTC-VF.otf.woff2') format('opentype');
 }
