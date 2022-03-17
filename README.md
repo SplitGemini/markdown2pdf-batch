@@ -1,15 +1,17 @@
 # Convert markdown to pdf in batch
 
-This is a bash script for convert all markdown(.md) docs in a directory to pdf, and reserve dir structure. It use [pandoc](https://github.com/jgm/pandoc), [mermaid-cli](https://github.com/mermaid-js/mermaid-cli) and [wkhtmltopdf](https://github.com/wkhtmltopdf/wkhtmltopdf) to complete the conversion process.
+It is a node script for convert all markdown(.md) docs in a directory to pdf, and reserve dir structure. It use [shd101wyy/mume](https://github.com/shd101wyy/mume) to complete the conversion process.
 
 ## Usage
 
-for script mkdocs_pdf.sh
+`npm i` first
+
+for script index.js
 
 Arguments:
 
-* `[-d|--docs]`: md dir
-* `[-o|--output]`: pdf output dir, md dir suffix with '-pdf' by default
+* `[-d|--docs]`: md dir, mandatory.
+* `[-o|--output]`: pdf output dir, md dir suffix with '-pdf' by default.
 
 ## Example
 
@@ -20,7 +22,7 @@ node index.js --docs docs
 
 ## Container
 
-use `docker run -w $(pwd) -v $(pwd):$(pwd) -u $(id -u):$(id -g) --rm guoh27/jelina:md2pdf <Arguments>` run container
+recommand use `docker run -w $(pwd) -v $(pwd):$(pwd) -u $(id -u):$(id -g) --rm guoh27/jelina:md2pdf <Arguments>` run container
 
 example: `docker run -w $(pwd) -v $(pwd):$(pwd) -u $(id -u):$(id -g) --rm guoh27/jelina:md2pdf --docs tests`
 
@@ -31,3 +33,5 @@ example: `docker run -w $(pwd) -v $(pwd):$(pwd) -u $(id -u):$(id -g) --rm guoh27
 ## Old
 
 Old dir stores bash script that use pandoc and wkhtmltopdf to convert pdf, using these tools instead of memu is too silly for me.
+
+It is a bash script for convert all markdown(.md) docs in a directory to pdf, and reserve dir structure. It use [pandoc](https://github.com/jgm/pandoc), [mermaid-cli](https://github.com/mermaid-js/mermaid-cli) and [wkhtmltopdf](https://github.com/wkhtmltopdf/wkhtmltopdf) to complete the conversion process.
